@@ -29,6 +29,7 @@ from api.carphoto import car_api
 from api.carChat import car_chat_api
 from api.titanic import titanic_api
 from api.weather import weather_api
+from api.disaster import disaster_api
 
 from api.vote import vote_api
 # database Initialization functions
@@ -42,6 +43,7 @@ from model.nestPost import NestPost, initNestPosts # Justin added this, custom f
 from model.vote import Vote, initVotes
 from model.titanic import TitanicModel, initTitanic
 from model.weather import WeatherModel, initWeather
+from model.disaster import DisasterModel, initDisaster
 # server only Views
 
 # register URIs for api endpoints
@@ -60,6 +62,7 @@ app.register_blueprint(vote_api)
 app.register_blueprint(car_api)
 app.register_blueprint(titanic_api)
 app.register_blueprint(weather_api)
+app.register_blueprint(disaster_api)
 
 # Tell Flask-Login the view function name of your login route
 login_manager.login_view = "login"

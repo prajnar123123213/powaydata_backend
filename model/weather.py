@@ -1,24 +1,35 @@
-# model/weather.py
-
 import requests
+from datetime import datetime
 
-API_KEY = '45efd2124b8b4350a9f165744250704'
+API_KEY = '348a953dd59446df8ba62332252504'  # Replace this with your actual API key from WeatherAPI
 
 class WeatherModel:
     @staticmethod
     def fetch(city):
-        url = f"https://api.weatherapi.com/v1/current.json?key={API_KEY}&q={city}"
-        try:
-            response = requests.get(url)
-            data = response.json()
-            return {
-                'location': f"{data['location']['name']}, {data['location']['region']}",
-                'temperature': f"{data['current']['temp_f']} °F",
-                'condition': data['current']['condition']['text'],
-                'icon': data['current']['condition']['icon']
-            }
-        except Exception as e:
-            return {'error': str(e)}
+        # Step 1: Make a request to WeatherAPI for the 7-day forecast
+        url = f"https://api.weatherapi.com/v1/forecast.json?key={API_KEY}&q={city}&days=7"
+        response = requests.get(url)
+        data = response.json()
 
-def initWeather():
-    print("Weather model initialized (no database setup needed).")
+        # Check if the request was successful
+        if 'error' in data:
+            return {'error': data['error']['message']}
+
+        # Step 2: Extract the 7-day forecast data
+        forecast_data = data['forecast']['forecastday']
+        forecast = []
+
+        for day in forecast_data:
+            date = day['date']
+            day_data = {
+                'date': date,
+                'temperature': {
+                    'high': day['day']['maxtemp_f'],
+                    'low': day['day']['mintemp_f']
+                },
+                'condition': day['day']['condition']['text'],
+                'icon': day['day']['condition']['icon']
+            }
+            forecast.append(day_data)
+
+        return {'forecast': forecast}
